@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Babu's Dino Derby</title>
+<style>
+html,body{margin:0;height:100%;background:#10151c;overflow:hidden;overscroll-behavior:none;touch-action:none}
+body{display:flex;align-items:center;justify-content:center}
+canvas{image-rendering:pixelated;image-rendering:crisp-edges;width:100vw;height:100vh;height:100dvh;object-fit:contain;background:#000;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.home{position:fixed;top:calc(max(8px,env(safe-area-inset-top)) + 64px);left:8px;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font:bold 26px/48px sans-serif;text-align:center;text-decoration:none;z-index:10;touch-action:auto}
+</style></head><body>
+<a class="home" href="index.html" aria-label="Home">&#8962;</a>
+<canvas id="c" width="960" height="600"></canvas>
+<script src="narrative.js"></script>
+<script src="game.js"></script>
+</body></html>

@@ -1,13 +1,52 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Babu's Dino Derby</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ashwik's Game Room</title>
 <style>
-html,body{margin:0;height:100%;background:#10151c;overflow:hidden;overscroll-behavior:none;touch-action:none}
-body{display:flex;align-items:center;justify-content:center}
-canvas{image-rendering:pixelated;image-rendering:crisp-edges;width:100vw;height:100vh;height:100dvh;object-fit:contain;background:#000;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:linear-gradient(#4fc3f7,#b3e5fc 60%,#aed581);font-family:"Trebuchet MS",Verdana,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+h1{margin:8px 0 4px;font-size:clamp(28px,7vw,52px);color:#fff;text-shadow:0 4px 0 #0277bd;text-align:center}
+p.sub{margin:0 0 18px;font-size:clamp(16px,3.5vw,22px);color:#01579b;font-weight:bold;text-align:center}
+.grid{display:grid;grid-template-columns:1fr;gap:18px;width:100%;max-width:900px;flex:1;align-content:center}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+a.card{display:flex;flex-direction:column;align-items:center;gap:10px;min-height:160px;padding:14px;border-radius:24px;text-decoration:none;color:#fff;box-shadow:0 8px 0 rgba(0,0,0,.25);transition:transform .1s}
+a.card:active{transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.derby{background:#e53935}.dragon{background:#7e57c2}
+canvas{width:100%;max-width:360px;aspect-ratio:2/1;border-radius:16px;image-rendering:pixelated;background:#000}
+.card b{font-size:clamp(24px,5vw,32px);text-shadow:0 3px 0 rgba(0,0,0,.3)}
+.card span{font-size:clamp(14px,3.2vw,18px);text-align:center;opacity:.95}
+.play{margin-top:auto;background:#ffeb3b;color:#333;font-weight:bold;font-size:22px;padding:10px 34px;border-radius:30px}
 </style></head><body>
-<canvas id="c" width="960" height="600"></canvas>
-<script src="narrative.js"></script>
-<script src="game.js"></script>
+<h1>Ashwik's Game Room</h1>
+<p class="sub">Pick a game!</p>
+<div class="grid">
+  <a class="card derby" href="derby.html"><canvas id="pv1" width="160" height="80"></canvas><b>Dino Derby</b><span>Drive a car and bump the runaway dinosaurs back home!</span><i class="play">PLAY</i></a>
+  <a class="card dragon" href="dragon.html"><canvas id="pv2" width="160" height="80"></canvas><b>Dragon Dash</b><span>Fly on Ember the dragon, blast rocks, grab gems!</span><i class="play">PLAY</i></a>
+</div>
+<script>
+function px(g,x,y,w,h,c){g.fillStyle=c;g.fillRect(x,y,w,h)}
+(function(){
+  var g=document.getElementById('pv1').getContext('2d');
+  px(g,0,0,160,80,'#4f9a34');
+  for(var i=0;i<30;i++)px(g,(i*37)%160,(i*53)%80,2,2,'#3a7a26');
+  px(g,0,36,160,10,'#b89466');
+  px(g,20,38,22,12,'#e53935');px(g,28,41,6,6,'#90caf9');px(g,40,40,3,3,'#fff59d');
+  px(g,100,24,28,12,'#ff9800');px(g,126,26,6,6,'#ff9800');px(g,129,27,2,2,'#111');px(g,104,36,3,5,'#bf4a00');px(g,116,36,3,5,'#bf4a00');
+  px(g,60,60,10,6,'#9ccc3c');px(g,68,61,3,3,'#111');
+  px(g,130,58,6,6,'#2e7d32');
+})();
+(function(){
+  var g=document.getElementById('pv2').getContext('2d');
+  px(g,0,0,160,80,'#4fc3f7');px(g,0,50,160,30,'#7cb342');px(g,0,70,160,10,'#8d6e63');
+  px(g,120,8,14,14,'#ffeb3b');
+  px(g,20,12,26,8,'#fff');px(g,90,22,22,7,'#fff');
+  px(g,36,30,28,12,'#43a047');px(g,40,34,18,8,'#ffb74d');px(g,58,26,12,10,'#43a047');px(g,66,29,3,3,'#fff');
+  px(g,42,22,16,10,'#e53935');px(g,44,16,10,8,'#e53935');
+  px(g,44,22,8,8,'#ffcc80');px(g,44,20,8,4,'#1e88e5');
+  px(g,72,31,5,3,'#ff7043');px(g,77,32,4,2,'#ffee58');
+  px(g,100,52,14,18,'#78909c');px(g,104,48,6,4,'#90a4ae');
+  px(g,76,54,4,4,'#ffd54f');px(g,130,40,8,8,'#ab47bc');
+})();
+</script>
 </body></html>
