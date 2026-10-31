@@ -220,21 +220,26 @@ addEventListener('blur', () => { ptrs.clear(); for (const k in keys) keys[k] = f
 let touchMode = false;
 const ptrs = new Map(); // id -> {x,y,boost}
 const boostBtn = () => ({ x: W - 80, y: H - 190, r: 56 });
+const revBtn = () => ({ x: 80, y: H - 190, r: 56 });
+let boostReq = false;
 function ptrPos(e) { const b = cv.getBoundingClientRect(); return { x: (e.clientX - b.left) * W / b.width, y: (e.clientY - b.top) * H / b.height }; }
 cv.addEventListener('pointerdown', e => {
   audioInit(); pressed.Enter = true; if (e.pointerType !== 'mouse') touchMode = true;
   const p = ptrPos(e), b = boostBtn();
+  const rb = revBtn();
   p.boost = state === 'play' && hyp(p.x - b.x, p.y - b.y) < b.r + 14;
+  p.rev = state === 'play' && !p.boost && hyp(p.x - rb.x, p.y - rb.y) < rb.r + 14;
   ptrs.set(e.pointerId, p); try { cv.setPointerCapture(e.pointerId); } catch (_) {}
-  if (p.boost) pressed.Space = true;
+  if (p.boost) boostReq = true;
 });
-cv.addEventListener('pointermove', e => { const p = ptrs.get(e.pointerId); if (p && !p.boost) Object.assign(p, ptrPos(e)); });
+cv.addEventListener('pointermove', e => { const p = ptrs.get(e.pointerId); if (p && !p.boost && !p.rev) Object.assign(p, ptrPos(e)); });
 for (const ev of ['pointerup', 'pointercancel']) cv.addEventListener(ev, e => ptrs.delete(e.pointerId));
 cv.addEventListener('contextmenu', e => e.preventDefault());
 function touchSteer() { // -1..1 toward the finger, or null
-  for (const p of ptrs.values()) { if (p.boost) continue;
+  const rev = car.vf < -5 || [...ptrs.values()].some(q => q.rev);
+  for (const p of ptrs.values()) { if (p.boost || p.rev) continue;
     const dx = p.x - (car.x - cam.x), dy = p.y - (car.y - cam.y); if (hyp(dx, dy) < 40) return 0;
-    let da = Math.atan2(dy, dx) - car.a; while (da > Math.PI) da -= 2 * Math.PI; while (da < -Math.PI) da += 2 * Math.PI;
+    let da = Math.atan2(dy, dx) - car.a - (rev ? Math.PI : 0); while (da > Math.PI) da -= 2 * Math.PI; while (da < -Math.PI) da += 2 * Math.PI;
     return clamp(da * 2.5, -1, 1); }
   return null;
 }
@@ -245,7 +250,7 @@ function fitCanvas() {
 }
 addEventListener('resize', fitCanvas); addEventListener('orientationchange', fitCanvas);
 const K = {
-  up: () => keys.ArrowUp || keys.KeyW || keys.__always, down: () => keys.ArrowDown || keys.KeyS,
+  up: () => keys.ArrowUp || keys.KeyW || keys.__always, down: () => keys.ArrowDown || keys.KeyS || [...ptrs.values()].some(p => p.rev),
   left: () => keys.ArrowLeft || keys.KeyA, right: () => keys.ArrowRight || keys.KeyD
 };
 
@@ -404,7 +409,8 @@ function updateCar(dt) {
   const fx = Math.cos(car.a), fy = Math.sin(car.a), rx = -fy, ry = fx;
   let vf = car.vx * fx + car.vy * fy, vl = car.vx * rx + car.vy * ry;
   const boosting = car.boost > 0;
-  if ((keys.Space || pressed.Space) && car.boostCd <= 0 && state === 'play') { car.boost = 1.1; car.boostCd = 2.5; SFX.boost(); shake = Math.max(shake, 4); quip('boost'); puff(car.x - fx * 20, car.y - fy * 20, 10, '#ffd54f', 120, 0.4, 5); }
+  if ((keys.Space || boostReq || [...ptrs.values()].some(p => p.boost)) && car.boostCd <= 0 && state === 'play') { car.boost = 1.1; car.boostCd = 2.5; SFX.boost(); shake = Math.max(shake, 4); quip('boost'); puff(car.x - fx * 20, car.y - fy * 20, 10, '#ffd54f', 120, 0.4, 5); }
+  boostReq = false;
   car.boost = Math.max(0, car.boost - dt); car.boostCd = Math.max(0, car.boostCd - dt); car.hurtT = Math.max(0, car.hurtT - dt);
   const maxF = car.boost > 0 ? 470 : 290;
   if (!K.down()) vf += (car.boost > 0 ? 1000 : 430) * dt;
@@ -790,7 +796,15 @@ function drawHUD() {
   drawBoostButton();
   drawBanner();
 }
+function drawRevButton() {
+  const b = revBtn(), held = [...ptrs.values()].some(p => p.rev);
+  ctx.globalAlpha = touchMode ? 0.9 : 0.55; ctx.fillStyle = '#90caf9'; ctx.strokeStyle = '#000'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.arc(b.x, b.y, b.r - (held ? 4 : 0), 0, 7); ctx.fill(); ctx.stroke(); ctx.globalAlpha = 1;
+  ctx.fillStyle = '#0d47a1'; ctx.beginPath(); ctx.moveTo(b.x, b.y + 16); ctx.lineTo(b.x - 18, b.y - 10); ctx.lineTo(b.x + 18, b.y - 10); ctx.closePath(); ctx.fill();
+  text(touchMode ? 'BACK' : 'S', b.x, b.y + 38, 14, '#fff', 'center');
+}
 function drawBoostButton() {
+  drawRevButton();
   const b = boostBtn(), ready = car.boostCd <= 0 && car.boost <= 0, held = [...ptrs.values()].some(p => p.boost);
   ctx.globalAlpha = touchMode ? 0.9 : 0.55; ctx.fillStyle = ready ? '#ffd54f' : '#6d5f2a'; ctx.strokeStyle = '#000'; ctx.lineWidth = 5;
   ctx.beginPath(); ctx.arc(b.x, b.y, b.r - (held ? 4 : 0), 0, 7); ctx.fill(); ctx.stroke(); ctx.globalAlpha = 1;
@@ -828,7 +842,7 @@ function render() {
     text(N.subtitle, W / 2, 190, 22, '#fff', 'center');
     drawSpr(S.car, W / 2 - 150, 250, 0); drawSpr(DS.raptor.PA, W / 2 + 150, 250, Math.PI);
     ctx.font = 'bold 18px "Courier New",monospace'; ctx.textAlign = 'center';
-    [touchMode ? 'TOUCH and HOLD to steer the car' : 'LEFT / RIGHT (or A / D) to steer', touchMode ? 'Tap the yellow BOOST button to zoom!' : 'SPACE to boost    P pause    M mute', 'Bump all the dinosaurs! They run away!'].forEach((l, i) => text(l, W / 2, 310 + i * 28, 18, '#fff', 'center'));
+    [touchMode ? 'TOUCH and HOLD to steer the car' : 'LEFT / RIGHT (or A / D) to steer', touchMode ? 'Yellow BOOST = zoom!   Blue BACK = reverse' : 'SPACE to boost    P pause    M mute', 'Bump all the dinosaurs! They run away!'].forEach((l, i) => text(l, W / 2, 310 + i * 28, 18, '#fff', 'center'));
     if (Math.floor(time * 2) % 2) text(touchMode ? 'TAP TO START' : 'PRESS ENTER TO START', W / 2, 460, 30, '#a5d6a7', 'center');
     text('HI SCORE ' + hiscore, W / 2, 500, 16, '#b0bec5', 'center');
   } else {
