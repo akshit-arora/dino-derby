@@ -20,7 +20,7 @@ p.sub{margin:0 0 18px;font-size:clamp(16px,3.5vw,22px);color:#01579b;font-weight
 @media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
 a.card{display:flex;flex-direction:column;align-items:center;gap:10px;min-height:160px;padding:14px;border-radius:24px;text-decoration:none;color:#fff;box-shadow:0 8px 0 rgba(0,0,0,.25);transition:transform .1s}
 a.card:active{transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
-.derby{background:#e53935}.dragon{background:#7e57c2}
+.derby{background:#e53935}.dragon{background:#7e57c2}.petshop{background:#ff8a65}
 canvas{width:100%;max-width:360px;aspect-ratio:2/1;border-radius:16px;image-rendering:pixelated;background:#000}
 .card b{font-size:clamp(24px,5vw,32px);text-shadow:0 3px 0 rgba(0,0,0,.3)}
 .card span{font-size:clamp(14px,3.2vw,18px);text-align:center;opacity:.95}
@@ -31,6 +31,7 @@ canvas{width:100%;max-width:360px;aspect-ratio:2/1;border-radius:16px;image-rend
 <div class="grid">
   <a class="card derby" href="derby.html"><canvas id="pv1" width="160" height="80"></canvas><b>Dino Derby</b><span>Drive a car and bump the runaway dinosaurs back home!</span><i class="play">PLAY</i></a>
   <a class="card dragon" href="dragon.html"><canvas id="pv2" width="160" height="80"></canvas><b>Dragon Dash</b><span>Fly on Ember the dragon, blast rocks, grab gems!</span><i class="play">PLAY</i></a>
+  <a class="card petshop" href="petshop.html"><canvas id="pv3" width="160" height="80"></canvas><b>Pet Shop</b><span>Count, add and give change to the animal customers!</span><i class="play">PLAY</i></a>
 </div>
 <script>
 function px(g,x,y,w,h,c){g.fillStyle=c;g.fillRect(x,y,w,h)}
@@ -55,6 +56,14 @@ function px(g,x,y,w,h,c){g.fillStyle=c;g.fillRect(x,y,w,h)}
   px(g,72,31,5,3,'#ff7043');px(g,77,32,4,2,'#ffee58');
   px(g,100,52,14,18,'#78909c');px(g,104,48,6,4,'#90a4ae');
   px(g,76,54,4,4,'#ffd54f');px(g,130,40,8,8,'#ab47bc');
+})();
+(function(){
+  var g=document.getElementById('pv3').getContext('2d');
+  px(g,0,0,160,80,'#ffe0b2');for(var i=0;i<4;i++)px(g,i*48,0,24,50,'#ffd8a0');
+  px(g,0,50,160,30,'#a1662f');px(g,0,50,160,5,'#d9a066');
+  px(g,24,22,22,30,'#42a5f5');px(g,26,12,18,14,'#a1744a');px(g,22,12,5,10,'#5d4037');px(g,43,12,5,10,'#5d4037');px(g,30,16,3,3,'#111');px(g,38,16,3,3,'#111');px(g,32,21,6,3,'#f3d9b1');
+  px(g,66,8,70,28,'#fff');px(g,70,12,12,12,'#e53935');px(g,88,14,12,10,'#29b6f6');px(g,106,12,12,12,'#ffca28');
+  px(g,100,56,50,18,'#e8cfa0');px(g,106,60,10,10,'#e53935');px(g,122,60,10,10,'#ffc107');
 })();
 </script>
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>

@@ -1,6 +1,6 @@
 // Offline cache for the Game Room. Bump VERSION when any file changes.
-const VERSION = 'gameroom-v2';
-const FILES = ['./', 'index.html', 'derby.html', 'dragon.html', 'game.js', 'narrative.js', 'dragon.js', 'dragon-narrative.js',
+const VERSION = 'gameroom-v3';
+const FILES = ['./', 'index.html', 'derby.html', 'dragon.html', 'game.js', 'narrative.js', 'dragon.js', 'dragon-narrative.js', 'petshop.html', 'petshop.js', 'petshop-content.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {

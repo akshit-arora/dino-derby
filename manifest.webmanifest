@@ -1,7 +1,7 @@
 {
   "name": "Ashwik's Game Room",
   "short_name": "Game Room",
-  "description": "Dino Derby and Dragon Dash",
+  "description": "Dino Derby, Dragon Dash and Pet Shop",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
